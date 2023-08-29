@@ -1,0 +1,3 @@
+The simulation works for all the commands except the options for date command. I have assumend maximum length of directory as 100 charaters and file as 100 charaters.
+The simulation shows file doesn't exist in case wrong option is entered for a specific command.
+The starting directory is assumed to be Desktop.

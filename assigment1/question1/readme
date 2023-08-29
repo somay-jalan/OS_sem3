@@ -1,0 +1,2 @@
+all through the three parts of this code , we are implementing the use of primarily, wait(NULL)
+ command that instructs the parents to wait for its child to execute and then when the child terminates the parent finishes its execution.
