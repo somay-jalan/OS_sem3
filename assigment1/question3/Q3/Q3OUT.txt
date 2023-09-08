@@ -1,3 +1,0 @@
-Result of xor 1 3 : 2
-Result of product 2 5 : 10
-Result of compare 5 1 : 5
