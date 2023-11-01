@@ -1,0 +1,2 @@
+This is the answer to q3 in OS. 
+We have made a c program to add kernel module. with sudo insmod its inserting and with rmmod it will remove. dmesg shows the output in the 
