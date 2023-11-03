@@ -21,14 +21,6 @@ Space unused: <Total space mapped but not used by user>
 Main Chain Length: <Length of the main chain>
 Sub-chain Length array: <Array denoting the length of the subchains>
 ```
-* Analyse the output of the example.c file below to get a better understanding of the output
----
-### Example Output
-PAGE_SIZE= 4096 Bytes
-
-Starting MeMS Virtual Address= 1000
-
-![Example Output](example_output.jpg)
 
 
 ### Explanantion of code in mems.h
@@ -49,3 +41,13 @@ mems_get: This fucntion iterates through the free list and find main chain node 
 
 mems_free: This function iterates through the free list to find the sub chain node whose virtual starting address is equal to the inputted value and changes its type from process to hole.
 Then it iterates through the free list to find adjacent holes in the list and add those holes to get a single big hole.
+
+
+* Analyse the output of the example.c file below to get a better understanding of the output
+---
+### Example Output (already given in the assignment not our output)
+PAGE_SIZE= 4096 Bytes
+
+Starting MeMS Virtual Address= 1000
+
+![Example Output](example_output.jpg)
