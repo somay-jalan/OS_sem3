@@ -64,7 +64,28 @@ Input Parameter: Nothing
 Returns: Nothing
 */
 void mems_finish(){
-    
+    struct main_chain_node *curnode=head;
+    struct main_chain_node *nextnode=curnode->next;
+    while(curnode!=NULL){
+        struct sub_chain_node *cursubnode=curnode->sub_chain;
+        struct sub_chain_node *nextsubnode=cursubnode->next;
+        while(cursubnode!=NULL){
+            munmap(cursubnode,PAGE_SIZE);
+            if(nextsubnode==NULL){
+                break;
+            }
+            cursubnode=nextsubnode;
+            nextsubnode=nextsubnode->next;
+        }
+        munmap(curnode->memory_address,curnode->no_pages*PAGE_SIZE);
+        munmap(curnode,PAGE_SIZE);
+        if(nextnode==NULL){
+            break;
+        }
+        curnode=nextnode;
+        nextnode=nextnode->next;
+    }
+    head=NULL;
 }
 
 

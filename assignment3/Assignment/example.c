@@ -52,7 +52,8 @@ int main(int argc, char const *argv[])
     ptr[3] = (int*)mems_malloc(sizeof(int)*250);
     mems_print_stats();
 
-    // printf("\n--------- Unmapping all memory [mems_finish] --------\n\n");
-    // mems_finish();
+    printf("\n--------- Unmapping all memory [mems_finish] --------\n\n");
+    mems_finish();
+    mems_print_stats();
     return 0;
 }
