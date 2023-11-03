@@ -366,7 +366,7 @@ void *mems_get(void*v_ptr){
     struct main_chain_node *curnode=head;
     while(curnode!=NULL){
         if(vir_memory_addr>=curnode->virtual_address_start && vir_memory_addr<curnode->virtual_address_end){
-            phy_memory_addr=curnode->memory_address+(vir_memory_addr-curnode->virtual_address_start);
+            phy_memory_addr=(long)curnode->memory_address+(vir_memory_addr-curnode->virtual_address_start);
             break;
         }
         curnode=curnode->next;
