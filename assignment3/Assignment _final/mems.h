@@ -39,7 +39,7 @@ As PAGESIZE can differ system to system we should have flexibility to modify thi
 macro to make the output of all system same and conduct a fair evaluation. 
 */
 #define PAGE_SIZE 4096
-
+#define No_of_pages_of_free_list 5
 
 /*
 Initializes all the required parameters for the MeMS system. The main parameters to be initialized are:
@@ -51,9 +51,19 @@ Returns: Nothing
 */
 struct main_chain_node *head;
 int virtual_address;
+int *node_add_start_ptr;
+int *node_add_ptr;
+
 void mems_init(){
     head=NULL;
     virtual_address=1000;
+    node_add_start_ptr=(int *)(mmap(NULL,PAGE_SIZE*No_of_pages_of_free_list,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+    node_add_ptr=node_add_start_ptr;
+    if(node_add_ptr==MAP_FAILED){
+        printf("mmap failed\n");
+    }
+    // printf("size of main node: %ld, size of side chain node :%ld\n",sizeof(struct main_chain_node),sizeof(struct sub_chain_node));
+    // printf("trying node add ptr:%ld\n",node_add_ptr);
 }
 
 
@@ -67,25 +77,14 @@ void mems_finish(){
     struct main_chain_node *curnode=head;
     struct main_chain_node *nextnode=curnode->next;
     while(curnode!=NULL){
-        struct sub_chain_node *cursubnode=curnode->sub_chain;
-        struct sub_chain_node *nextsubnode=cursubnode->next;
-        while(cursubnode!=NULL){
-            munmap(cursubnode,PAGE_SIZE);
-            if(nextsubnode==NULL){
-                break;
-            }
-            cursubnode=nextsubnode;
-            nextsubnode=nextsubnode->next;
-        }
         munmap(curnode->memory_address,curnode->no_pages*PAGE_SIZE);
-        munmap(curnode,PAGE_SIZE);
         if(nextnode==NULL){
             break;
         }
-        curnode=nextnode;
-        nextnode=nextnode->next;
+        curnode=curnode->next;
     }
     head=NULL;
+    munmap(node_add_start_ptr,PAGE_SIZE*5);
 }
 
 
@@ -111,7 +110,9 @@ void* mems_malloc(size_t size){
             no_of_pages=(int)(size/PAGE_SIZE)+1;
         }
         struct main_chain_node *node=NULL;
-        node=(struct main_chain_node *)(mmap(NULL,PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+        node=(struct main_chain_node* )node_add_ptr;
+        node_add_ptr+=(sizeof(struct main_chain_node)+1);
+        // printf("trying node: %ld, trying node add ptr:%ld\n",node,node_add_ptr);
         int *allocted_mem=(int *)mmap(NULL,no_of_pages*PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         if(node==MAP_FAILED || allocted_mem==MAP_FAILED){
             printf("mmap failed");
@@ -128,7 +129,9 @@ void* mems_malloc(size_t size){
             struct sub_chain_node *sub_node_process=NULL;
             virtual_address=node->virtual_address_end;
             // printf("node is : %d %d %p %d %d",node->type,node->no_pages,node->memory_address,node->virtual_address_start,node->virtual_address_end);
-            sub_node_process=(struct sub_chain_node *)(mmap(NULL,PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+            sub_node_process=(struct sub_chain_node *)node_add_ptr;
+            node_add_ptr+=(sizeof(struct sub_chain_node )+1);
+            // printf("trying sub node process: %ld, trying node add ptr:%ld\n",sub_node_process,node_add_ptr);
             if(sub_node_process==MAP_FAILED){
                 printf("mmap failed");
             }else{
@@ -145,7 +148,9 @@ void* mems_malloc(size_t size){
             }
             if(node->no_pages*PAGE_SIZE-size>0){
                 struct sub_chain_node *sub_node_hole=NULL;
-                sub_node_hole=(struct sub_chain_node *)(mmap(NULL,PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+                sub_node_hole=(struct sub_chain_node *)node_add_ptr;
+                node_add_ptr+=(sizeof(struct sub_chain_node )+1);
+                // printf("trying sub node hole: %ld, trying node add ptr:%ld\n",sub_node_hole,node_add_ptr);
                 if(sub_node_hole==MAP_FAILED){
                     printf("mmap failed");
                 }else{
@@ -177,7 +182,9 @@ void* mems_malloc(size_t size){
                             
                             struct sub_chain_node *nextsubnode=cursubnode->next;
                             struct sub_chain_node *sub_node_new_hole=NULL;
-                            sub_node_new_hole=(struct sub_chain_node *)(mmap(NULL,PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+                            sub_node_new_hole=(struct sub_chain_node *)node_add_ptr;
+                            node_add_ptr+=(sizeof(struct sub_chain_node )+1);
+                            // printf("trying sub node hole: %ld, trying node add ptr:%ld\n",sub_node_new_hole,node_add_ptr);
                             if(sub_node_new_hole==MAP_FAILED){
                                 printf("mmap failed");
                             }else{
@@ -195,7 +202,9 @@ void* mems_malloc(size_t size){
                             }
                         }else{
                             struct sub_chain_node *sub_node_new_hole=NULL;
-                            sub_node_new_hole=(struct sub_chain_node *)(mmap(NULL,PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+                            sub_node_new_hole=(struct sub_chain_node *)node_add_ptr;
+                            node_add_ptr+=(sizeof(struct sub_chain_node )+1);
+                            // printf("trying sub node hole: %ld, trying node add ptr:%ld\n",sub_node_new_hole,node_add_ptr);
                             if(sub_node_new_hole==MAP_FAILED){
                                 printf("mmap failed");
                             }else{
@@ -236,7 +245,9 @@ void* mems_malloc(size_t size){
                 no_of_pages=(int)(size/PAGE_SIZE)+1;
             }
             struct main_chain_node *node=NULL;
-            node=(struct main_chain_node *)(mmap(NULL,PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+            node=(struct main_chain_node *)node_add_ptr;
+            node_add_ptr+=(sizeof(struct main_chain_node )+1);
+            // printf("trying node: %ld, trying node add ptr:%ld\n",node,node_add_ptr);
             int *allocted_mem=(int *)mmap(NULL,no_of_pages*PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
             if(node==MAP_FAILED || allocted_mem==MAP_FAILED){
                 printf("mmap failed");
@@ -253,7 +264,9 @@ void* mems_malloc(size_t size){
                 virtual_address=node->virtual_address_end;
                 struct sub_chain_node *sub_node_process=NULL;
                 // printf("node is : %d %d %p %d %d",node->type,node->no_pages,node->memory_address,node->virtual_address_start,node->virtual_address_end);
-                sub_node_process=(struct sub_chain_node *)(mmap(NULL,PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+                sub_node_process=(struct sub_chain_node *)node_add_ptr;
+                node_add_ptr+=(sizeof(struct main_chain_node )+1);
+                // printf("trying sub node process: %ld, trying node add ptr:%ld\n",sub_node_process,node_add_ptr);
                 if(sub_node_process==MAP_FAILED){
                     printf("mmap failed");
                 }else{
@@ -270,9 +283,10 @@ void* mems_malloc(size_t size){
 
                 }
                 if(node->no_pages*PAGE_SIZE-size>0){
-
                     struct sub_chain_node *sub_node_hole=NULL;
-                    sub_node_hole=(struct sub_chain_node *)(mmap(NULL,PAGE_SIZE,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
+                    sub_node_hole=(struct sub_chain_node *)node_add_ptr;
+                    node_add_ptr+=(sizeof(struct main_chain_node )+1);
+                    // printf("trying sub node hole: %ld, trying node add ptr:%ld\n",sub_node_hole,node_add_ptr);
                     if(sub_node_hole==MAP_FAILED){
                         printf("mmap failed");
                     }else{
