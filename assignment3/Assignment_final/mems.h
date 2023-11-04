@@ -85,6 +85,7 @@ void mems_finish(){
     }
     head=NULL;
     munmap(node_add_start_ptr,PAGE_SIZE*5);
+    head=NULL;
 }
 
 
