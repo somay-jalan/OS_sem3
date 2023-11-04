@@ -185,40 +185,34 @@ void* mems_malloc(size_t size){
                             sub_node_new_hole=(struct sub_chain_node *)node_add_ptr;
                             node_add_ptr+=(sizeof(struct sub_chain_node )+1);
                             // printf("trying sub node hole: %ld, trying node add ptr:%ld\n",sub_node_new_hole,node_add_ptr);
-                            if(sub_node_new_hole==MAP_FAILED){
-                                printf("mmap failed");
-                            }else{
-                                sub_node_new_hole->type=1;
-                                cursubnode->type=0;
-                                sub_node_new_hole->size=cursubnode->size-size;
-                                cursubnode->size=size;
-                                cursubnode->virtual_address_end=cursubnode->virtual_address_start+cursubnode->size-1;
-                                sub_node_new_hole->virtual_address_start=cursubnode->virtual_address_end+1;
-                                sub_node_new_hole->virtual_address_end=sub_node_new_hole->virtual_address_start+sub_node_new_hole->size-1;
-                                cursubnode->next=sub_node_new_hole;
-                                nextsubnode->prev=sub_node_new_hole;
-                                sub_node_new_hole->prev=cursubnode;
-                                sub_node_new_hole->next=nextsubnode;
-                            }
+                        
+                            sub_node_new_hole->type=1;
+                            cursubnode->type=0;
+                            sub_node_new_hole->size=cursubnode->size-size;
+                            cursubnode->size=size;
+                            cursubnode->virtual_address_end=cursubnode->virtual_address_start+cursubnode->size-1;
+                            sub_node_new_hole->virtual_address_start=cursubnode->virtual_address_end+1;
+                            sub_node_new_hole->virtual_address_end=sub_node_new_hole->virtual_address_start+sub_node_new_hole->size-1;
+                            cursubnode->next=sub_node_new_hole;
+                            nextsubnode->prev=sub_node_new_hole;
+                            sub_node_new_hole->prev=cursubnode;
+                            sub_node_new_hole->next=nextsubnode;
+                        
                         }else{
                             struct sub_chain_node *sub_node_new_hole=NULL;
                             sub_node_new_hole=(struct sub_chain_node *)node_add_ptr;
                             node_add_ptr+=(sizeof(struct sub_chain_node )+1);
                             // printf("trying sub node hole: %ld, trying node add ptr:%ld\n",sub_node_new_hole,node_add_ptr);
-                            if(sub_node_new_hole==MAP_FAILED){
-                                printf("mmap failed");
-                            }else{
-                                sub_node_new_hole->type=1;
-                                cursubnode->type=0;
-                                sub_node_new_hole->size=cursubnode->size-size;
-                                cursubnode->size=size;
-                                cursubnode->virtual_address_end=cursubnode->virtual_address_start+cursubnode->size-1;
-                                sub_node_new_hole->virtual_address_start=cursubnode->virtual_address_end+1;
-                                sub_node_new_hole->virtual_address_end=sub_node_new_hole->virtual_address_start+sub_node_new_hole->size-1;
-                                cursubnode->next=sub_node_new_hole;
-                                sub_node_new_hole->prev=cursubnode;
-                                sub_node_new_hole->next=NULL;
-                            }
+                            sub_node_new_hole->type=1;
+                            cursubnode->type=0;
+                            sub_node_new_hole->size=cursubnode->size-size;
+                            cursubnode->size=size;
+                            cursubnode->virtual_address_end=cursubnode->virtual_address_start+cursubnode->size-1;
+                            sub_node_new_hole->virtual_address_start=cursubnode->virtual_address_end+1;
+                            sub_node_new_hole->virtual_address_end=sub_node_new_hole->virtual_address_start+sub_node_new_hole->size-1;
+                            cursubnode->next=sub_node_new_hole;
+                            sub_node_new_hole->prev=cursubnode;
+                            sub_node_new_hole->next=NULL;
 
                         }
                     }else{
@@ -267,39 +261,31 @@ void* mems_malloc(size_t size){
                 sub_node_process=(struct sub_chain_node *)node_add_ptr;
                 node_add_ptr+=(sizeof(struct main_chain_node )+1);
                 // printf("trying sub node process: %ld, trying node add ptr:%ld\n",sub_node_process,node_add_ptr);
-                if(sub_node_process==MAP_FAILED){
-                    printf("mmap failed");
-                }else{
-                    sub_node_process->type=0;
-                    sub_node_process->size=size;
-                    sub_node_process->virtual_address_start=node->virtual_address_start;
-                    sub_node_process->virtual_address_end=sub_node_process->virtual_address_start+sub_node_process->size-1;
-                    sub_node_process->next=NULL;
-                    sub_node_process->prev=NULL;
-                    node->sub_chain=sub_node_process;
-                    virtaul_adress_return=sub_node_process->virtual_address_start;
-                    // printf("\n");
-                    // printf("sub_node_process is : %d %d %d %d",sub_node_process->type,sub_node_process->size,sub_node_process->virtual_address_start,sub_node_process->virtual_address_end);
+                sub_node_process->type=0;
+                sub_node_process->size=size;
+                sub_node_process->virtual_address_start=node->virtual_address_start;
+                sub_node_process->virtual_address_end=sub_node_process->virtual_address_start+sub_node_process->size-1;
+                sub_node_process->next=NULL;
+                sub_node_process->prev=NULL;
+                node->sub_chain=sub_node_process;
+                virtaul_adress_return=sub_node_process->virtual_address_start;
+                // printf("\n");
+                // printf("sub_node_process is : %d %d %d %d",sub_node_process->type,sub_node_process->size,sub_node_process->virtual_address_start,sub_node_process->virtual_address_end);
 
-                }
                 if(node->no_pages*PAGE_SIZE-size>0){
                     struct sub_chain_node *sub_node_hole=NULL;
                     sub_node_hole=(struct sub_chain_node *)node_add_ptr;
                     node_add_ptr+=(sizeof(struct main_chain_node )+1);
                     // printf("trying sub node hole: %ld, trying node add ptr:%ld\n",sub_node_hole,node_add_ptr);
-                    if(sub_node_hole==MAP_FAILED){
-                        printf("mmap failed");
-                    }else{
-                        sub_node_hole->type=1;
-                        sub_node_hole->size=node->no_pages*PAGE_SIZE-size;
-                        sub_node_hole->virtual_address_start=sub_node_process->virtual_address_end+1;
-                        sub_node_hole->virtual_address_end=sub_node_hole->virtual_address_start+sub_node_hole->size-1;
-                        sub_node_hole->next=NULL;
-                        sub_node_hole->prev=sub_node_process;
-                        sub_node_process->next=sub_node_hole;
-                        // printf("\n");
-                        // printf("sub_node_process is : %d %d %d %d\n",sub_node_hole->type,sub_node_hole->size,sub_node_hole->virtual_address_start,sub_node_hole->virtual_address_end);
-                    }
+                    sub_node_hole->type=1;
+                    sub_node_hole->size=node->no_pages*PAGE_SIZE-size;
+                    sub_node_hole->virtual_address_start=sub_node_process->virtual_address_end+1;
+                    sub_node_hole->virtual_address_end=sub_node_hole->virtual_address_start+sub_node_hole->size-1;
+                    sub_node_hole->next=NULL;
+                    sub_node_hole->prev=sub_node_process;
+                    sub_node_process->next=sub_node_hole;
+                    // printf("\n");
+                    // printf("sub_node_process is : %d %d %d %d\n",sub_node_hole->type,sub_node_hole->size,sub_node_hole->virtual_address_start,sub_node_hole->virtual_address_end);
                 }
                 
             }
