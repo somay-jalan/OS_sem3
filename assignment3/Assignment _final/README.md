@@ -25,14 +25,19 @@ Sub-chain Length array: <Array denoting the length of the subchains>
 
 ### Explanantion of code in mems.h
 The code consists of 2 structs- 
+
 sub_chain_node: This is the struct for the sub chain node of the free list.
+
 main_chain_node: This is the struct for the main chain node of the free list.
 
 Variables-
 
 *head: This is the pointer to the start of the free list.
+
 virtual address: This is the value of current virtual address of the free list.
+
 *node_add_ptr_start: This is the pointer to the start of the Pages of the memory containing the free list.
+
 *node_add_ptr: This is the pointer to the current memory address at which we are adding the node.
 
 Explain of each function-
