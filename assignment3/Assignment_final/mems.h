@@ -403,9 +403,11 @@ void mems_free(void *v_ptr){
         }
         curnode=curnode->next;
     }
+
     curnode=head;
     while(curnode!=NULL){
         struct sub_chain_node *cursubnode=curnode->sub_chain;
+        int merged=0;//not merged
             while(cursubnode!=NULL){
                 if(cursubnode->next==NULL){
                     break;
@@ -418,9 +420,12 @@ void mems_free(void *v_ptr){
                         if(nextsubnode->next!=NULL){
                             nextsubnode->next->prev=cursubnode;
                         }
+                        merged=1;
                     }
                 }
-                cursubnode=cursubnode->next;
+                if(merged==0){
+                    cursubnode=cursubnode->next;
+                }
             }
             curnode=curnode->next;
         }
