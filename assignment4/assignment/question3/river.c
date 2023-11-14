@@ -9,44 +9,44 @@ sem_t passing,left_go,right_go,left_done,right_done;
 int car_left,car_right;
 int done=0;
 void passing_func(){
-    sleep(1);
+    sleep(5);
 }
 
 void *left(void* args){
     long car_num=(long)(args);
     sem_wait(&left_go);
     sem_wait(&passing);
-    printf("Car number %ld on left is passing.\n",car_num);
-    passing_func();
     int car_on_bridge;
     sem_getvalue(&left_go,&car_on_bridge);
-    printf("Number of cars on bridge are:%d\n",5-car_on_bridge);
+    printf("Car number %ld on left is passing.\n",car_num);
+    // printf("Number of cars on bridge are:%d\n",5-car_on_bridge);
     done++;
-    printf("Car number %ld on left has passed.\n",car_num);
+    // printf("Car number %ld on left has passed.\n",car_num);
     if(done==car_left){
         sem_post(&left_done);
     }
-    sem_post(&left_go);
     sem_post(&passing);
+    passing_func();
+    sem_post(&left_go);
     
 }
 
 void *right(void* args){
     long car_num=(long)(args);
     sem_wait(&right_go);
-    sem_wait(&passing);
-    printf("Car number %ld on right is passing.\n",car_num);
     passing_func();
+    sem_wait(&passing);
     int car_on_bridge;
     sem_getvalue(&right_go,&car_on_bridge);
-    printf("Number of cars on bridge are:%d\n",5-car_on_bridge);
+    printf("Car number %ld on right is passing.\n",car_num);
+    // printf("Number of cars on bridge are:%d\n",5-car_on_bridge);
     done++;
-    printf("Car number %ld on right has passed.\n",car_num);
+    // printf("Car number %ld on right has passed.\n",car_num);
     if(done==car_right){
         sem_post(&right_done);
     }
-    sem_post(&right_go);
     sem_post(&passing);
+    sem_post(&right_go);
     
 }
 

@@ -1,0 +1,6 @@
+We have used 5 semaphore.
+passing: it makes sure that car is passing in correct order.
+left_go: it makes sure that only 5 cars are on the bridge at a particular time.(from left side)
+right_go: it makes sure that only 5 cars are on the bridge at a particular time.(from right side)
+left_done: to convey to the right side that left side is done.
+right_done: to convey to main thread that right side is done.
