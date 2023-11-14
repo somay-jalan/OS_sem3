@@ -1,0 +1,7 @@
+We have used 5 semaphore locks in this code. 
+load_unload: passenger waits for the car to be loaded or unloaded.
+car_go: Car waits for all the passengers to boarded.
+boarding_unboarding: passengers wait for the other passengers to board or unboard.
+car_stop: car wait for the car to stop befor stoping.
+car_loaded: checks if all the passengers have loaded the car.
+car_unladed: check if all the passengers have unloaded the car.
