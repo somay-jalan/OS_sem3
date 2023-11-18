@@ -24,7 +24,7 @@ void board(){
     sleep(1);
 }
 void unboard(){
-    printf("Unbarding the car\n");
+    printf("Unbording the car\n");
     sleep(1);
 }
 void *passenger(void *args){
@@ -63,13 +63,14 @@ void *car(void *args){
     printf("Car going\n");
     sleep(2);
     printf("Car completed its journey\n");
-    sem_post(&car_go);
+    // sem_post(&car_go);
     sem_post(&car_stop);
     printf("Car unloading\n");
     unload();
     printf("Car unloaded\n");
     sem_post(&load_unload);
     sem_wait(&car_unloaded);
+    sem_wait(&car_stop);
 }
 
 
@@ -91,20 +92,29 @@ int main(int argc, char *argv[]){
     if(capacity>num_passengers){
         printf("Capacity more than numbers of passengers.\n");
         return 0;
-    }else if(capacity<num_passengers){
-        printf("There is not enough space in the car first %d passengers will be taken.\n",capacity);
     }
-    int rc;
-    rc=pthread_create(&car_thread,NULL,car,NULL);assert(rc==0);
-    sem_wait(&load_unload);
-    printf("Boarding passengers\n");
-    for(int i=0;i<capacity;i++){
-        rc=pthread_create(&passenger_thread,NULL,passenger,(void*)(long)(i+1));assert(rc==0);
+    int cur_count=0;
+    while(cur_count<num_passengers){
+        car_load_int=0;
+        car_unload_int=0;
+        if(num_passengers-cur_count<capacity){
+            printf("Not enough passengers left to fill the car.\n");
+            printf("All the journeys has been done\n");
+            return 0;
+        }
+        int rc;
+        rc=pthread_create(&car_thread,NULL,car,NULL);assert(rc==0);
+        sem_wait(&load_unload);
+        printf("Boarding passengers\n");
+        for(int i=0;i<capacity;i++){
+            rc=pthread_create(&passenger_thread,NULL,passenger,(void*)(long)(cur_count+1));assert(rc==0);
+            cur_count++;
+        }
+        sem_wait(&car_loaded);
+        printf("Boarding complete\n");
+        sem_post(&car_go);
+        rc=pthread_join(car_thread,NULL);assert(rc==0);
     }
-    sem_wait(&car_loaded);
-    printf("Boarding complete\n");
-    sem_post(&car_go);
-    rc=pthread_join(car_thread,NULL);assert(rc==0);
-    printf("All the journey has been done\n");
+    printf("All the journeys has been done\n");
     return 0;
 }

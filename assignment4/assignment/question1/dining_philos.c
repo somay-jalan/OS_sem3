@@ -5,7 +5,7 @@
 #include<assert.h>
 
 #define sleeptime 1
-#define no_of_loops 12
+#define no_of_loops 1
  
 pthread_mutex_t fork1,fork2,fork3,fork4,fork5;
 
