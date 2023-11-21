@@ -34,7 +34,6 @@ void *left(void* args){
 void *right(void* args){
     long car_num=(long)(args);
     sem_wait(&right_go);
-    passing_func();
     sem_wait(&passing);
     int car_on_bridge;
     sem_getvalue(&right_go,&car_on_bridge);
@@ -46,6 +45,7 @@ void *right(void* args){
         sem_post(&right_done);
     }
     sem_post(&passing);
+    passing_func();
     sem_post(&right_go);
     
 }

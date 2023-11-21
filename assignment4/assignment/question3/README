@@ -1,6 +1,5 @@
-We have used 5 semaphore.
-passing: it makes sure that car is passing in correct order.
-left_go: it makes sure that only 5 cars are on the bridge at a particular time.(from left side)
-right_go: it makes sure that only 5 cars are on the bridge at a particular time.(from right side)
-left_done: to convey to the right side that left side is done.
-right_done: to convey to main thread that right side is done.
+We have submitted 2 codes beacause there were 2 approaches and we were not sure which one is correct and we coded for both,
+Approach 1- The code starts to empty from left side and the left is emptied first and then as soon as that is finished,
+the code starts to empty from right side and the right side is emptied. At any moment in time there are only 5 or less cars on bridge at one time.
+
+Approach 2- The code starts to empty the left side and then after 5 car goes from left side, it switches to right side side then 5 cars goes from right side and goes untill all the cars are done. And if at some point either one emptied then all the other cars go,  At any moment in time there are only 5 or less cars on bridge at one time.
