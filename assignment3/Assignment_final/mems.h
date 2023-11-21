@@ -409,7 +409,7 @@ void mems_free(void *v_ptr){
         struct sub_chain_node *cursubnode=curnode->sub_chain;
         int merged=0;//not merged
             while(cursubnode!=NULL){
-                merged=0;
+                // merged=0;
                 if(cursubnode->next==NULL){
                     break;
                 }else{
