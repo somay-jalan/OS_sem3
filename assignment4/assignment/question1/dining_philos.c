@@ -8,41 +8,117 @@
 #define no_of_loops 1
  
 pthread_mutex_t fork1,fork2,fork3,fork4,fork5;
+pthread_mutex_t bowl1,bowl2;
+int cvcheck=0;
+
+long arr[2];
 
 void eating(long philos_num){
-    printf("philospher number:%ld is eating\n",philos_num);
     if(philos_num==1){
         pthread_mutex_lock(&fork1);
+        printf("Philosopher 1 has fork 1\n");
         pthread_mutex_lock(&fork5);
+        printf("Philosopher 1 has fork 5\n");
+        int var;
+        for(int i=0;i<2;i++){
+            if(arr[i]==-1){
+                arr[i]=philos_num;
+                var=i;
+                break;
+            }
+        }
+        printf("Philosoher numner %ld and %ld have the bowl.(-1 means that bowl is empty)\n",arr[0],arr[1]);
+        // printf("")
+        printf("philospher number:%ld is eating\n",philos_num);
         sleep(sleeptime);
+        arr[var]=-1;
         pthread_mutex_unlock(&fork1);
         pthread_mutex_unlock(&fork5);
+        cvcheck--;
 
     }else if(philos_num==2){
         pthread_mutex_lock(&fork2);
+        printf("Philosopher 2 has fork 2\n");
         pthread_mutex_lock(&fork1);
+        printf("Philosopher 2 has fork 1\n");
+        int val;
+        for(int i=0;i<2;i++){
+            if(arr[i]==-1){
+                arr[i]=philos_num;
+                val=i;
+                break;
+            }
+        }
+        printf("Philosoher numner %ld and %ld have the bowl.(-1 means that bowl is empty)\n",arr[0],arr[1]);
+        printf("philospher number:%ld is eating\n",philos_num);
         sleep(sleeptime);
+
+        arr[val]=-1;
         pthread_mutex_unlock(&fork2);
         pthread_mutex_unlock(&fork1);
+    
 
     }else if(philos_num==3){
         pthread_mutex_lock(&fork3);
+        printf("Philosopher 3 has fork 3\n");
         pthread_mutex_lock(&fork2);
+        printf("Philosopher 3 has fork 2\n");
+        int val;
+        for(int i=0;i<2;i++){
+            if(arr[i]==-1){
+                arr[i]=philos_num;
+                val=i;
+                break;
+            }
+        }
+        printf("Philosoher numner %ld and %ld have the bowl.(-1 means that bowl is empty)\n",arr[0],arr[1]);
+        printf("philospher number:%ld is eating\n",philos_num);
         sleep(sleeptime);
+
+        arr[val]=-1;
         pthread_mutex_unlock(&fork3);
         pthread_mutex_unlock(&fork2);
 
     }else if(philos_num==4){
         pthread_mutex_lock(&fork4);
+        printf("Philosopher 4 has fork 4\n");
         pthread_mutex_lock(&fork3);
+        printf("Philosopher 4 has fork 3\n");
+        int val;
+        for(int i=0;i<2;i++){
+            if(arr[i]==-1){
+                arr[i]=philos_num;
+                val=i;
+                break;
+            }
+        }
+        printf("Philosoher numner %ld and %ld have the bowl.(-1 means that bowl is empty)\n",arr[0],arr[1]);
+        printf("philospher number:%ld is eating\n",philos_num);
         sleep(sleeptime);
+
+        arr[val]=-1;
         pthread_mutex_unlock(&fork4);
         pthread_mutex_unlock(&fork3);
+        
 
     }else if(philos_num==5){
         pthread_mutex_lock(&fork4);
+        printf("Philosopher 5 has fork 4\n");
         pthread_mutex_lock(&fork5);
+        printf("Philosopher 5 has fork 5\n");
+        int val;
+        for(int i=0;i<2;i++){
+            if(arr[i]==-1){
+                arr[i]=philos_num;
+                val=i;
+                break;
+            }
+        }
+        printf("Philosoher numner %ld and %ld have the bowl.(-1 means that bowl is empty)\n",arr[0],arr[1]);
+        printf("philospher number:%ld is eating\n",philos_num);
         sleep(sleeptime);
+
+        arr[val]=-1;
         pthread_mutex_unlock(&fork4);
         pthread_mutex_unlock(&fork5);
     }else{
@@ -63,6 +139,8 @@ void *philospher(void *args){
 }
 
 int main(int argc, char *argv[]){
+    arr[0]=-1;
+    arr[1]=-1;
     for(int i=0;i<no_of_loops;i++){
         printf("------------------------RUNNING ANOTHER LOOP-----------------\n");
         printf("LOOP NUMBER:%d\n",i+1);
@@ -81,4 +159,3 @@ int main(int argc, char *argv[]){
     }
     return 0;
 }
-
