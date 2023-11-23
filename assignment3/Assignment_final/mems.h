@@ -56,7 +56,7 @@ int *node_add_ptr;
 
 void mems_init(){
     head=NULL;
-    virtual_address=1000;
+    virtual_address=0;
     node_add_start_ptr=(int *)(mmap(NULL,PAGE_SIZE*No_of_pages_of_free_list,PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0));
     node_add_ptr=node_add_start_ptr;
     if(node_add_ptr==MAP_FAILED){
@@ -75,7 +75,12 @@ Returns: Nothing
 */
 void mems_finish(){
     struct main_chain_node *curnode=head;
-    struct main_chain_node *nextnode=curnode->next;
+    struct main_chain_node *nextnode;
+    if(curnode!=NULL){
+        nextnode=curnode->next;
+    }else{
+        nextnode=NULL;
+    }
     while(curnode!=NULL){
         munmap(curnode->memory_address,curnode->no_pages*PAGE_SIZE);
         if(nextnode==NULL){
@@ -409,7 +414,7 @@ void mems_free(void *v_ptr){
         struct sub_chain_node *cursubnode=curnode->sub_chain;
         int merged=0;//not merged
             while(cursubnode!=NULL){
-                // merged=0;
+                merged=0;
                 if(cursubnode->next==NULL){
                     break;
                 }else{
